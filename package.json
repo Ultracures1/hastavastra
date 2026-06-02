@@ -1,0 +1,15 @@
+{
+  "name": "hastavastra",
+  "version": "1.0.0",
+  "description": "Hastavastra — Indian Ethnic Ecommerce Platform",
+  "scripts": {
+    "install:all": "npm install --prefix backend && npm install --prefix frontend",
+    "seed": "npm run seed --prefix backend",
+    "start:backend": "npm start --prefix backend",
+    "start:frontend": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run start:backend\" \"npm run start:frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
