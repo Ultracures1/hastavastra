@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Color Prediction Game</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green: #00b96b;
+    --green-dark: #009a58;
+    --violet: #7c3aed;
+    --violet-dark: #6d28d9;
+    --red: #ef4444;
+    --red-dark: #dc2626;
+    --bg: #0f0f1a;
+    --card: #1a1a2e;
+    --card2: #16213e;
+    --border: #2a2a4a;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --yellow: #f59e0b;
+    --gold: #fbbf24;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    max-width: 480px;
+    margin: 0 auto;
+    overflow-x: hidden;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #1e1b4b, #312e81);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid #4c1d95;
+  }
+  .header h1 { font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+  .header h1 span { color: var(--gold); }
+  .balance-chip {
+    background: rgba(251,191,36,0.15);
+    border: 1px solid var(--gold);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  /* ── Period + Timer ── */
+  .period-bar {
+    background: var(--card2);
+    margin: 12px;
+    border-radius: 14px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .period-info { }
+  .period-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+  .period-number { font-size: 22px; font-weight: 800; color: var(--gold); margin-top: 2px; }
+
+  .timer-wrap { text-align: right; }
+  .timer-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+  .timer-display {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+    justify-content: flex-end;
+  }
+  .timer-digit {
+    background: #0f0f1a;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    width: 38px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+    transition: color 0.3s;
+  }
+  .timer-digit.urgent { color: var(--red); border-color: var(--red); }
+  .timer-sep { font-size: 24px; font-weight: 800; line-height: 42px; }
+
+  /* ── Last Result Banner ── */
+  .last-result {
+    margin: 0 12px 12px;
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    min-height: 52px;
+    transition: all 0.4s;
+  }
+  .last-result.hidden { opacity: 0.4; }
+  .result-dot {
+    width: 32px; height: 32px; border-radius: 50%;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .result-dot.green { background: var(--green); }
+  .result-dot.red   { background: var(--red); }
+  .result-dot.violet{ background: var(--violet); }
+  .result-dot.red-violet { background: linear-gradient(135deg, var(--red), var(--violet)); }
+  .result-dot.green-violet { background: linear-gradient(135deg, var(--green), var(--violet)); }
+
+  .result-text { flex: 1; }
+  .result-text strong { font-size: 15px; }
+  .result-text span { color: var(--text2); font-size: 12px; display: block; }
+  .result-win { color: var(--green); font-weight: 700; font-size: 14px; }
+  .result-lose { color: var(--red); font-weight: 700; font-size: 14px; }
+
+  /* ── Color Buttons ── */
+  .color-section {
+    margin: 0 12px 12px;
+  }
+  .color-section-title {
+    font-size: 12px; color: var(--text2); text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 10px;
+  }
+  .color-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .color-btn {
+    border: none;
+    border-radius: 14px;
+    padding: 18px 8px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
+    position: relative;
+    overflow: hidden;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    letter-spacing: 0.5px;
+  }
+  .color-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0);
+    transition: background 0.15s;
+  }
+  .color-btn:active::after { background: rgba(255,255,255,0.15); }
+  .color-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+  .color-btn.green  { background: linear-gradient(160deg, #00d97e, var(--green-dark)); box-shadow: 0 4px 15px rgba(0,185,107,0.3); }
+  .color-btn.violet { background: linear-gradient(160deg, #9d5ff5, var(--violet-dark)); box-shadow: 0 4px 15px rgba(124,58,237,0.3); }
+  .color-btn.red    { background: linear-gradient(160deg, #f87171, var(--red-dark));   box-shadow: 0 4px 15px rgba(239,68,68,0.3); }
+  .color-btn.disabled { filter: grayscale(0.5) opacity(0.6); pointer-events: none; }
+  .color-btn .odds { font-size: 11px; opacity: 0.85; font-weight: 500; }
+  .color-btn .icon { font-size: 22px; }
+
+  /* ── Number Buttons ── */
+  .number-section {
+    margin: 0 12px 12px;
+  }
+  .number-btns {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+  .num-btn {
+    border: none;
+    border-radius: 10px;
+    padding: 14px 6px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+  }
+  .num-btn:hover { transform: translateY(-2px); }
+  .num-btn:active { transform: scale(0.95); }
+  .num-btn.disabled { filter: grayscale(0.5) opacity(0.6); pointer-events: none; }
+  /* 0,5 = violet+red gradient; 1,2,3,4 = green; 6,7,8,9 = red */
+  .num-btn.n0 { background: linear-gradient(135deg, var(--red), var(--violet)); box-shadow: 0 3px 10px rgba(239,68,68,0.25); }
+  .num-btn.n1, .num-btn.n3 { background: linear-gradient(135deg, #00d97e, var(--green-dark)); box-shadow: 0 3px 10px rgba(0,185,107,0.25); }
+  .num-btn.n2, .num-btn.n4 { background: linear-gradient(135deg, #f87171, var(--red-dark)); box-shadow: 0 3px 10px rgba(239,68,68,0.25); }
+  .num-btn.n5 { background: linear-gradient(135deg, var(--green), var(--violet)); box-shadow: 0 3px 10px rgba(0,185,107,0.25); }
+  .num-btn.n6, .num-btn.n8 { background: linear-gradient(135deg, #f87171, var(--red-dark)); box-shadow: 0 3px 10px rgba(239,68,68,0.25); }
+  .num-btn.n7, .num-btn.n9 { background: linear-gradient(135deg, #00d97e, var(--green-dark)); box-shadow: 0 3px 10px rgba(0,185,107,0.25); }
+  .num-btn .num-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,255,255,0.6);
+  }
+
+  /* ── Big Small buttons ── */
+  .size-section {
+    margin: 0 12px 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .size-btn {
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .size-btn:hover { transform: translateY(-2px); }
+  .size-btn.big  { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 15px rgba(245,158,11,0.3); }
+  .size-btn.small{ background: linear-gradient(135deg, #38bdf8, #0284c7); box-shadow: 0 4px 15px rgba(56,189,248,0.3); }
+  .size-btn.disabled { filter: grayscale(0.5) opacity(0.6); pointer-events: none; }
+  .size-btn .odds { font-size: 11px; opacity: 0.85; }
+
+  /* ── Bet Modal ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    display: flex; align-items: flex-end;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .modal-overlay.show { opacity: 1; pointer-events: all; }
+  .modal {
+    width: 100%; max-width: 480px; margin: 0 auto;
+    background: var(--card);
+    border-radius: 20px 20px 0 0;
+    padding: 20px 20px 32px;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    border-top: 3px solid;
+  }
+  .modal-overlay.show .modal { transform: translateY(0); }
+  .modal.green-border { border-color: var(--green); }
+  .modal.violet-border { border-color: var(--violet); }
+  .modal.red-border { border-color: var(--red); }
+  .modal.yellow-border { border-color: var(--yellow); }
+  .modal.blue-border { border-color: #38bdf8; }
+
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .modal-title { font-size: 18px; font-weight: 700; }
+  .modal-close {
+    background: var(--border); border: none; color: var(--text2);
+    width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+    font-size: 18px; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .modal-close:hover { background: #3a3a5a; }
+
+  .bet-color-tag {
+    display: inline-block;
+    padding: 4px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 700; color: #fff;
+    margin-bottom: 16px;
+  }
+
+  .bet-amounts {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+    margin-bottom: 18px;
+  }
+  .amount-chip {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 6px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text);
+  }
+  .amount-chip:hover { border-color: var(--gold); color: var(--gold); }
+  .amount-chip.active { background: var(--gold); color: #000; border-color: var(--gold); font-weight: 800; }
+
+  .custom-amount-wrap {
+    display: flex; gap: 8px; align-items: center;
+    margin-bottom: 18px;
+  }
+  .custom-amount-wrap label { font-size: 13px; color: var(--text2); white-space: nowrap; }
+  .custom-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .custom-input:focus { border-color: var(--gold); }
+
+  .multiplier-row {
+    display: flex; gap: 8px; margin-bottom: 20px;
+  }
+  .multi-btn {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 13px; font-weight: 600;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .multi-btn:hover { border-color: var(--text); color: var(--text); }
+
+  .agree-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 20px;
+    font-size: 13px; color: var(--text2);
+  }
+  .agree-row input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--gold); cursor: pointer; }
+
+  .confirm-btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 800;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
+    letter-spacing: 0.5px;
+  }
+  .confirm-btn:hover { transform: translateY(-2px); }
+  .confirm-btn:active { transform: scale(0.98); }
+  .confirm-btn.green  { background: linear-gradient(135deg, #00d97e, var(--green-dark)); box-shadow: 0 6px 20px rgba(0,185,107,0.4); }
+  .confirm-btn.violet { background: linear-gradient(135deg, #9d5ff5, var(--violet-dark)); box-shadow: 0 6px 20px rgba(124,58,237,0.4); }
+  .confirm-btn.red    { background: linear-gradient(135deg, #f87171, var(--red-dark));   box-shadow: 0 6px 20px rgba(239,68,68,0.4); }
+  .confirm-btn.yellow { background: linear-gradient(135deg, #fbbf24, #d97706);           box-shadow: 0 6px 20px rgba(245,158,11,0.4); }
+  .confirm-btn.blue   { background: linear-gradient(135deg, #38bdf8, #0284c7);           box-shadow: 0 6px 20px rgba(56,189,248,0.4); }
+  .confirm-btn:disabled { filter: grayscale(0.5) opacity(0.7); cursor: not-allowed; transform: none; }
+
+  .bet-summary {
+    display: flex; justify-content: space-between;
+    font-size: 13px; color: var(--text2);
+    margin-bottom: 16px; padding: 12px; background: var(--bg);
+    border-radius: 10px; border: 1px solid var(--border);
+  }
+  .bet-summary span { color: var(--text); font-weight: 600; }
+
+  /* ── History ── */
+  .history-section {
+    margin: 0 12px 80px;
+  }
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .section-title { font-size: 14px; font-weight: 700; letter-spacing: 0.5px; }
+  .dot-row {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px;
+  }
+  .h-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+  }
+  .h-dot.green  { background: var(--green); }
+  .h-dot.red    { background: var(--red); }
+  .h-dot.violet { background: var(--violet); }
+  .h-dot.red-violet   { background: linear-gradient(135deg, var(--red), var(--violet)); }
+  .h-dot.green-violet { background: linear-gradient(135deg, var(--green), var(--violet)); }
+
+  .history-table { width: 100%; border-collapse: collapse; }
+  .history-table th {
+    font-size: 11px; color: var(--text2); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 8px 10px; text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .history-table td {
+    padding: 10px 10px; font-size: 13px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .history-table tr:last-child td { border-bottom: none; }
+  .history-table tr { transition: background 0.15s; }
+  .history-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+  .tbl-dot {
+    width: 20px; height: 20px; border-radius: 50%;
+    display: inline-block; vertical-align: middle; margin-right: 6px;
+  }
+  .tbl-dot.green  { background: var(--green); }
+  .tbl-dot.red    { background: var(--red); }
+  .tbl-dot.violet { background: var(--violet); }
+  .tbl-dot.red-violet   { background: linear-gradient(135deg, var(--red), var(--violet)); }
+  .tbl-dot.green-violet { background: linear-gradient(135deg, var(--green), var(--violet)); }
+
+  .win-badge  { color: var(--green); font-weight: 700; }
+  .lose-badge { color: var(--red); font-weight: 700; }
+  .empty-badge{ color: var(--text2); font-size: 12px; }
+
+  /* ── Toast ── */
+  .toast-wrap {
+    position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
+    z-index: 300; display: flex; flex-direction: column; gap: 8px;
+    pointer-events: none; width: 90%; max-width: 380px;
+  }
+  .toast {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 14px; font-weight: 600;
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+  }
+  .toast.win  { border-color: var(--green); color: var(--green); }
+  .toast.lose { border-color: var(--red);   color: var(--red);   }
+  .toast.info { border-color: var(--gold);  color: var(--gold);  }
+  @keyframes slideIn  { from { opacity:0; transform:translateY(-16px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeOut  { from { opacity:1; } to { opacity:0; } }
+
+  /* ── Result Overlay ── */
+  .result-overlay {
+    position: fixed; inset: 0; z-index: 250;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.8);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .result-overlay.show { opacity: 1; pointer-events: all; }
+  .result-card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 32px 28px;
+    text-align: center;
+    width: 300px;
+    border: 2px solid var(--border);
+    transform: scale(0.8);
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .result-overlay.show .result-card { transform: scale(1); }
+  .result-big-dot {
+    width: 80px; height: 80px; border-radius: 50%;
+    margin: 0 auto 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 900;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  .result-card h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+  .result-card p  { font-size: 14px; color: var(--text2); margin-bottom: 6px; }
+  .result-amount  { font-size: 28px; font-weight: 900; margin: 10px 0 20px; }
+  .result-amount.win  { color: var(--green); }
+  .result-amount.lose { color: var(--red); }
+  .result-dismiss {
+    background: var(--border); border: none; color: var(--text);
+    border-radius: 10px; padding: 12px 32px; font-size: 15px;
+    font-weight: 700; cursor: pointer; transition: background 0.2s;
+  }
+  .result-dismiss:hover { background: #3a3a5a; }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex; gap: 0;
+    margin: 0 12px 14px;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 4px;
+    border: 1px solid var(--border);
+  }
+  .tab {
+    flex: 1; padding: 9px; text-align: center;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    border-radius: 9px; color: var(--text2);
+    transition: all 0.2s;
+  }
+  .tab.active { background: var(--border); color: var(--text); }
+
+  /* ── Locked overlay ── */
+  .locked-msg {
+    position: absolute; inset: 0;
+    background: rgba(15,15,26,0.85);
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 14px;
+    font-size: 13px; font-weight: 700; color: var(--red);
+    letter-spacing: 0.5px; gap: 6px;
+    z-index: 10;
+  }
+
+  .bet-zone { position: relative; }
+
+  /* ── Streak ── */
+  .streak-bar {
+    margin: 0 12px 12px;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .streak-item { text-align: center; }
+  .streak-val  { font-size: 18px; font-weight: 800; }
+  .streak-lbl  { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .streak-val.green  { color: var(--green); }
+  .streak-val.red    { color: var(--red); }
+  .streak-val.gold   { color: var(--gold); }
+
+  /* progress ring */
+  .timer-ring-wrap {
+    position: relative; width: 70px; height: 70px;
+  }
+  .timer-ring-svg { transform: rotate(-90deg); }
+  .ring-bg   { fill: none; stroke: var(--border); stroke-width: 4; }
+  .ring-fill { fill: none; stroke-width: 4; stroke-linecap: round;
+               transition: stroke-dashoffset 1s linear, stroke 0.5s; }
+  .ring-text {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 800;
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <h1>Color <span>Win</span></h1>
+  <div class="balance-chip" id="balanceChip">₹ 1,000.00</div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- Period + Timer -->
+<div class="period-bar">
+  <div class="period-info">
+    <div class="period-label">Period</div>
+    <div class="period-number" id="periodNumber">20240601001</div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:14px;">
+    <div class="timer-ring-wrap">
+      <svg class="timer-ring-svg" width="70" height="70" viewBox="0 0 70 70">
+        <circle class="ring-bg" cx="35" cy="35" r="30"/>
+        <circle class="ring-fill" id="ringFill" cx="35" cy="35" r="30"
+          stroke-dasharray="188.5" stroke-dashoffset="0" stroke="#00b96b"/>
+      </svg>
+      <div class="ring-text" id="ringText">60</div>
+    </div>
+    <div class="timer-wrap">
+      <div class="timer-label">Count Down</div>
+      <div class="timer-display">
+        <div class="timer-digit" id="t0">0</div>
+        <div class="timer-digit" id="t1">0</div>
+        <div class="timer-sep">:</div>
+        <div class="timer-digit" id="t2">6</div>
+        <div class="timer-digit" id="t3">0</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Last Result -->
+<div class="last-result" id="lastResult">
+  <div class="result-dot green" id="lastDot">G</div>
+  <div class="result-text">
+    <strong id="lastColorText">Waiting for first result…</strong>
+    <span id="lastPeriodText">Round will start soon</span>
+  </div>
+  <div id="lastWinLose"></div>
+</div>
+
+<!-- Streak -->
+<div class="streak-bar">
+  <div class="streak-item"><div class="streak-val green" id="winsVal">0</div><div class="streak-lbl">Wins</div></div>
+  <div class="streak-item"><div class="streak-val red"   id="lossVal">0</div><div class="streak-lbl">Losses</div></div>
+  <div class="streak-item"><div class="streak-val gold"  id="profitVal">₹0</div><div class="streak-lbl">Profit</div></div>
+  <div class="streak-item"><div class="streak-val"       id="roundsVal">0</div><div class="streak-lbl">Rounds</div></div>
+</div>
+
+<!-- Bet zone -->
+<div class="bet-zone" id="betZone">
+  <!-- Color Buttons -->
+  <div class="color-section">
+    <div class="color-section-title">Select Color</div>
+    <div class="color-btns">
+      <button class="color-btn green"  onclick="openBet('green',  'Green',  2)"><span class="icon">🟢</span>Green<span class="odds">2×</span></button>
+      <button class="color-btn violet" onclick="openBet('violet', 'Violet', 4.5)"><span class="icon">🟣</span>Violet<span class="odds">4.5×</span></button>
+      <button class="color-btn red"    onclick="openBet('red',    'Red',    2)"><span class="icon">🔴</span>Red<span class="odds">2×</span></button>
+    </div>
+  </div>
+
+  <!-- Number Buttons -->
+  <div class="number-section">
+    <div class="color-section-title">Select Number</div>
+    <div class="number-btns" id="numBtns"></div>
+  </div>
+
+  <!-- Big / Small -->
+  <div class="size-section">
+    <button class="size-btn big"   onclick="openBet('yellow','Big',   2)">🔺 Big<span class="odds">(5-9) · 2×</span></button>
+    <button class="size-btn small" onclick="openBet('blue',  'Small', 2)">🔻 Small<span class="odds">(0-4) · 2×</span></button>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('all')">All Results</div>
+  <div class="tab"        onclick="showTab('my')">My Bets</div>
+</div>
+
+<!-- History -->
+<div class="history-section">
+  <div class="dot-row" id="dotRow"></div>
+
+  <div id="allResultsPane">
+    <table class="history-table">
+      <thead><tr><th>Period</th><th>Number</th><th>Color</th><th>Size</th></tr></thead>
+      <tbody id="historyBody"></tbody>
+    </table>
+  </div>
+
+  <div id="myBetsPane" style="display:none">
+    <table class="history-table">
+      <thead><tr><th>Period</th><th>Choice</th><th>Bet</th><th>Result</th></tr></thead>
+      <tbody id="myBetsBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Bet Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Select Bet Amount</div>
+      <button class="modal-close" onclick="closeBet()">✕</button>
+    </div>
+    <div class="bet-color-tag" id="betTag">Green</div>
+
+    <div class="bet-amounts">
+      <div class="amount-chip" onclick="setAmount(10)">₹10</div>
+      <div class="amount-chip" onclick="setAmount(50)">₹50</div>
+      <div class="amount-chip active" onclick="setAmount(100)">₹100</div>
+      <div class="amount-chip" onclick="setAmount(500)">₹500</div>
+      <div class="amount-chip" onclick="setAmount(1000)">₹1K</div>
+      <div class="amount-chip" onclick="setAmount(5000)">₹5K</div>
+      <div class="amount-chip" onclick="setAmount(10000)">₹10K</div>
+      <div class="amount-chip" onclick="setAmount(50000)">₹50K</div>
+    </div>
+
+    <div class="custom-amount-wrap">
+      <label>Custom:</label>
+      <input class="custom-input" type="number" id="customInput" value="100" min="10" max="100000"
+             oninput="onCustomInput(this.value)">
+    </div>
+
+    <div class="multiplier-row">
+      <div class="multi-btn" onclick="multiplyBet(2)">×2</div>
+      <div class="multi-btn" onclick="multiplyBet(3)">×3</div>
+      <div class="multi-btn" onclick="multiplyBet(5)">×5</div>
+      <div class="multi-btn" onclick="divideBet(2)">÷2</div>
+    </div>
+
+    <div class="bet-summary">
+      <div>Bet: <span id="summaryBet">₹100</span></div>
+      <div>Odds: <span id="summaryOdds">2×</span></div>
+      <div>Win: <span id="summaryWin">₹200</span></div>
+    </div>
+
+    <div class="agree-row">
+      <input type="checkbox" id="agreeCheck" checked>
+      <label for="agreeCheck">I agree to the game rules</label>
+    </div>
+
+    <button class="confirm-btn" id="confirmBtn" onclick="placeBet()">Confirm Bet</button>
+  </div>
+</div>
+
+<!-- Result Overlay -->
+<div class="result-overlay" id="resultOverlay">
+  <div class="result-card">
+    <div class="result-big-dot" id="resBigDot"></div>
+    <h2 id="resTitle">Result</h2>
+    <p id="resPeriodLabel">Period</p>
+    <p id="resColorLabel"></p>
+    <div class="result-amount" id="resAmount"></div>
+    <button class="result-dismiss" onclick="dismissResult()">Continue</button>
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+let balance   = 1000;
+let period    = 20240601001;
+let timer     = 60;
+let timerInt  = null;
+let locked    = false;
+let history   = [];   // {period, number, color, size}
+let myBets    = [];   // {period, choice, choiceType, betAmt, odds, result, pnl}
+let stats     = { wins:0, losses:0, profit:0 };
+let activeTab = 'all';
+
+// Bet modal state
+let betColor  = 'green';
+let betLabel  = 'Green';
+let betOdds   = 2;
+let betAmt    = 100;
+
+// COLOR MAP for numbers
+const NUM_COLOR = {
+  0: 'red-violet',
+  1: 'green', 2: 'red', 3: 'green', 4: 'red',
+  5: 'green-violet',
+  6: 'red', 7: 'green', 8: 'red', 9: 'green'
+};
+const NUM_SIZE = n => n >= 5 ? 'Big' : 'Small';
+
+// ── DOM Helpers ────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+
+function fmt(n) {
+  return '₹ ' + Math.abs(n).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function updateBalanceChip() {
+  $('balanceChip').textContent = fmt(balance);
+}
+
+// ── Build Number Buttons ───────────────────────────────────────────────────
+function buildNumBtns() {
+  const wrap = $('numBtns');
+  wrap.innerHTML = '';
+  for (let i = 0; i <= 9; i++) {
+    const btn = document.createElement('button');
+    btn.className = `num-btn n${i}`;
+    btn.innerHTML = `${i}<div class="num-dot"></div>`;
+    btn.onclick = () => openBet('number', `Number ${i}`, 9, i);
+    wrap.appendChild(btn);
+  }
+}
+
+// ── Timer ──────────────────────────────────────────────────────────────────
+function startTimer() {
+  clearInterval(timerInt);
+  timer = 60;
+  locked = false;
+  removeLock();
+  updateTimer();
+  timerInt = setInterval(() => {
+    timer--;
+    if (timer <= 5 && timer > 0) showToast('⏰ Betting closes in ' + timer + 's', 'info', 900);
+    if (timer <= 10) lockBetting();
+    updateTimer();
+    if (timer <= 0) {
+      clearInterval(timerInt);
+      resolveRound();
+    }
+  }, 1000);
+}
+
+function lockBetting() {
+  if (locked) return;
+  locked = true;
+  const zone = $('betZone');
+  if (!zone.querySelector('.locked-msg')) {
+    const el = document.createElement('div');
+    el.className = 'locked-msg';
+    el.innerHTML = '🔒 Betting Closed';
+    zone.appendChild(el);
+  }
+  zone.querySelectorAll('.color-btn,.num-btn,.size-btn').forEach(b => b.classList.add('disabled'));
+}
+
+function removeLock() {
+  const zone = $('betZone');
+  const lm = zone.querySelector('.locked-msg');
+  if (lm) lm.remove();
+  zone.querySelectorAll('.color-btn,.num-btn,.size-btn').forEach(b => b.classList.remove('disabled'));
+}
+
+function updateTimer() {
+  const m = Math.floor(timer / 60);
+  const s = timer % 60;
+  const d0 = Math.floor(m / 10), d1 = m % 10;
+  const d2 = Math.floor(s / 10), d3 = s % 10;
+  ['t0','t1','t2','t3'].forEach((id, i) => {
+    const el = $(id);
+    el.textContent = [d0,d1,d2,d3][i];
+    el.classList.toggle('urgent', timer <= 10);
+  });
+  // ring
+  const pct = timer / 60;
+  const circ = 188.5;
+  const offset = circ * (1 - pct);
+  const ring = $('ringFill');
+  ring.style.strokeDashoffset = offset;
+  ring.style.stroke = timer > 20 ? '#00b96b' : timer > 10 ? '#f59e0b' : '#ef4444';
+  $('ringText').textContent = timer;
+  $('ringText').style.color = timer <= 10 ? '#ef4444' : '#fff';
+}
+
+// ── Round Resolution ───────────────────────────────────────────────────────
+function resolveRound() {
+  // Draw random number 0–9
+  const num   = Math.floor(Math.random() * 10);
+  const color = NUM_COLOR[num];
+  const size  = NUM_SIZE(num);
+
+  // Record history
+  history.unshift({ period, number: num, color, size });
+  if (history.length > 50) history.pop();
+
+  // Update last result banner
+  updateLastResult(num, color, size, period);
+
+  // Settle pending bets for this round
+  settleBets(num, color, size);
+
+  // Render
+  renderDotRow();
+  renderHistoryTable();
+  renderMyBets();
+
+  period++;
+  $('periodNumber').textContent = period;
+
+  setTimeout(startTimer, 2000);
+}
+
+function colorMatches(betType, betLabel, num, color, size) {
+  if (betType === 'number')  return parseInt(betLabel.split(' ')[1]) === num;
+  if (betType === 'yellow')  return size === 'Big';
+  if (betType === 'blue')    return size === 'Small';
+  // color bets: green/red/violet — also match combo colors
+  if (betType === 'green')   return color === 'green' || color === 'green-violet';
+  if (betType === 'red')     return color === 'red'   || color === 'red-violet';
+  if (betType === 'violet')  return color === 'violet' || color === 'red-violet' || color === 'green-violet';
+  return false;
+}
+
+function settleBets(num, color, size) {
+  let totalPnl = 0;
+  myBets.forEach(bet => {
+    if (bet.period !== period) return;
+    const won = colorMatches(bet.choiceType, bet.choice, num, color, size);
+    if (won) {
+      const winAmt = bet.betAmt * bet.odds;
+      bet.result = 'Win';
+      bet.pnl    = winAmt - bet.betAmt;
+      balance   += winAmt;
+      stats.wins++;
+      totalPnl  += bet.pnl;
+      stats.profit += bet.pnl;
+    } else {
+      bet.result = 'Lose';
+      bet.pnl    = -bet.betAmt;
+      stats.losses++;
+      stats.profit -= bet.betAmt;
+    }
+  });
+
+  updateBalanceChip();
+  updateStats();
+
+  if (myBets.some(b => b.period === period)) {
+    const thisBets = myBets.filter(b => b.period === period);
+    const won = thisBets.some(b => b.result === 'Win');
+    showResultOverlay(num, color, size, won, totalPnl, period);
+  }
+}
+
+// ── Last Result Banner ─────────────────────────────────────────────────────
+function updateLastResult(num, color, size, p) {
+  const dot  = $('lastDot');
+  const cTxt = $('lastColorText');
+  const pTxt = $('lastPeriodText');
+
+  const colorName = color.replace('-', ' & ').replace(/\b\w/g, c => c.toUpperCase());
+  dot.className = `result-dot ${color}`;
+  dot.textContent = num;
+  cTxt.textContent = `${num} — ${colorName} · ${size}`;
+  pTxt.textContent = `Period: ${p}`;
+  $('lastResult').classList.remove('hidden');
+}
+
+// ── Stats ──────────────────────────────────────────────────────────────────
+function updateStats() {
+  $('winsVal').textContent   = stats.wins;
+  $('lossVal').textContent   = stats.losses;
+  $('profitVal').textContent = (stats.profit >= 0 ? '+₹' : '-₹') + Math.abs(stats.profit).toLocaleString('en-IN', {minimumFractionDigits:2,maximumFractionDigits:2});
+  $('profitVal').style.color = stats.profit >= 0 ? 'var(--green)' : 'var(--red)';
+  $('roundsVal').textContent = history.length;
+}
+
+// ── Dot Row ────────────────────────────────────────────────────────────────
+function renderDotRow() {
+  const row = $('dotRow');
+  row.innerHTML = '';
+  history.slice(0, 20).forEach(h => {
+    const d = document.createElement('div');
+    d.className = `h-dot ${h.color}`;
+    d.textContent = h.number;
+    row.appendChild(d);
+  });
+}
+
+// ── History Table ──────────────────────────────────────────────────────────
+function renderHistoryTable() {
+  const tbody = $('historyBody');
+  tbody.innerHTML = '';
+  history.slice(0, 20).forEach(h => {
+    const label = h.color.replace('-', ' & ').replace(/\b\w/g, c => c.toUpperCase());
+    tbody.innerHTML += `<tr>
+      <td>${h.period}</td>
+      <td><strong>${h.number}</strong></td>
+      <td><span class="tbl-dot ${h.color}"></span>${label}</td>
+      <td>${h.size}</td>
+    </tr>`;
+  });
+  if (!history.length) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text2);padding:20px">No results yet</td></tr>';
+}
+
+function renderMyBets() {
+  const tbody = $('myBetsBody');
+  tbody.innerHTML = '';
+  const bets = [...myBets].reverse();
+  bets.forEach(b => {
+    const pending = b.result === 'Pending';
+    const cls = b.result === 'Win' ? 'win-badge' : b.result === 'Lose' ? 'lose-badge' : 'empty-badge';
+    const pnl = pending ? '–' : (b.pnl >= 0 ? '+'+fmt(b.pnl) : '-'+fmt(Math.abs(b.pnl)));
+    tbody.innerHTML += `<tr>
+      <td>${b.period}</td>
+      <td>${b.choice}</td>
+      <td>${fmt(b.betAmt)}</td>
+      <td class="${cls}">${pending ? 'Pending' : b.result + ' ' + pnl}</td>
+    </tr>`;
+  });
+  if (!bets.length) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text2);padding:20px">No bets yet</td></tr>';
+}
+
+// ── Tabs ───────────────────────────────────────────────────────────────────
+function showTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='all')||(i===1&&tab==='my')));
+  $('allResultsPane').style.display = tab === 'all' ? '' : 'none';
+  $('myBetsPane').style.display     = tab === 'my'  ? '' : 'none';
+}
+
+// ── Bet Modal ──────────────────────────────────────────────────────────────
+function openBet(color, label, odds, numVal) {
+  if (locked) { showToast('🔒 Betting is closed for this round', 'lose'); return; }
+  betColor = color;
+  betLabel = label;
+  betOdds  = odds;
+  betAmt   = 100;
+
+  $('modalTitle').textContent = `Bet on ${label}`;
+  const tag = $('betTag');
+  tag.textContent = label;
+  tag.style.background = color === 'green' ? 'var(--green)' :
+                          color === 'violet' ? 'var(--violet)' :
+                          color === 'red'  ? 'var(--red)' :
+                          color === 'yellow' ? 'var(--yellow)' : '#38bdf8';
+
+  const modal = $('modal');
+  modal.className = `modal ${color === 'green' ? 'green' : color === 'violet' ? 'violet' : color === 'red' ? 'red' : color === 'yellow' ? 'yellow' : 'blue'}-border`;
+
+  const btn = $('confirmBtn');
+  btn.className = `confirm-btn ${color === 'green' ? 'green' : color === 'violet' ? 'violet' : color === 'red' ? 'red' : color === 'yellow' ? 'yellow' : 'blue'}`;
+
+  setAmount(100);
+  $('agreeCheck').checked = true;
+  $('modalOverlay').classList.add('show');
+}
+
+function closeBet() { $('modalOverlay').classList.remove('show'); }
+
+function handleOverlayClick(e) {
+  if (e.target === $('modalOverlay')) closeBet();
+}
+
+function setAmount(val) {
+  betAmt = val;
+  $('customInput').value = val;
+  document.querySelectorAll('.amount-chip').forEach(c => {
+    const cv = parseInt(c.textContent.replace('₹','').replace('K','000'));
+    c.classList.toggle('active', cv === val);
+  });
+  updateSummary();
+}
+
+function onCustomInput(val) {
+  betAmt = Math.max(10, parseInt(val) || 10);
+  document.querySelectorAll('.amount-chip').forEach(c => c.classList.remove('active'));
+  updateSummary();
+}
+
+function multiplyBet(x) {
+  betAmt = Math.min(betAmt * x, 100000);
+  $('customInput').value = betAmt;
+  document.querySelectorAll('.amount-chip').forEach(c => c.classList.remove('active'));
+  updateSummary();
+}
+
+function divideBet(x) {
+  betAmt = Math.max(Math.floor(betAmt / x), 10);
+  $('customInput').value = betAmt;
+  document.querySelectorAll('.amount-chip').forEach(c => c.classList.remove('active'));
+  updateSummary();
+}
+
+function updateSummary() {
+  $('summaryBet').textContent  = fmt(betAmt);
+  $('summaryOdds').textContent = betOdds + '×';
+  $('summaryWin').textContent  = fmt(betAmt * betOdds);
+}
+
+function placeBet() {
+  if (!$('agreeCheck').checked) { showToast('⚠️ Please agree to game rules', 'info'); return; }
+  if (betAmt > balance) { showToast('❌ Insufficient balance', 'lose'); return; }
+  if (locked) { showToast('🔒 Betting is closed', 'lose'); return; }
+
+  balance -= betAmt;
+  updateBalanceChip();
+
+  myBets.push({
+    period,
+    choice: betLabel,
+    choiceType: betColor,
+    betAmt,
+    odds: betOdds,
+    result: 'Pending',
+    pnl: 0
+  });
+
+  renderMyBets();
+  closeBet();
+  showToast(`✅ Bet placed: ${fmt(betAmt)} on ${betLabel}`, 'info');
+}
+
+// ── Result Overlay ─────────────────────────────────────────────────────────
+function showResultOverlay(num, color, size, won, pnl, p) {
+  const dot = $('resBigDot');
+  dot.className = `result-big-dot ${color}`;
+  dot.style.background = color === 'green' ? 'var(--green)' :
+                          color === 'red'   ? 'var(--red)'   :
+                          color === 'violet'? 'var(--violet)' :
+                          color === 'red-violet'   ? 'linear-gradient(135deg,var(--red),var(--violet))' :
+                          'linear-gradient(135deg,var(--green),var(--violet))';
+  dot.textContent = num;
+
+  $('resTitle').textContent     = won ? '🎉 You Win!' : '😢 Better Luck!';
+  $('resPeriodLabel').textContent = `Period: ${p}`;
+  const label = color.replace('-',' & ').replace(/\b\w/g,c=>c.toUpperCase());
+  $('resColorLabel').textContent = `Result: ${num} · ${label} · ${size}`;
+  $('resAmount').textContent    = won ? '+' + fmt(pnl) : fmt(pnl);
+  $('resAmount').className      = 'result-amount ' + (won ? 'win' : 'lose');
+
+  $('resultOverlay').classList.add('show');
+}
+
+function dismissResult() { $('resultOverlay').classList.remove('show'); }
+
+// ── Toast ──────────────────────────────────────────────────────────────────
+function showToast(msg, type = 'info', duration = 3000) {
+  const wrap = $('toastWrap');
+  const el   = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(() => el.remove(), duration);
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+buildNumBtns();
+updateBalanceChip();
+renderHistoryTable();
+renderMyBets();
+$('lastResult').classList.add('hidden');
+startTimer();
+</script>
+</body>
+</html>
