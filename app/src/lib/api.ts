@@ -58,6 +58,10 @@ export interface StorefrontData {
 
 const TOKEN_KEY = "hastavastra_admin_token";
 
+// When the backend runs on a different host than the static frontend, set
+// VITE_API_URL (e.g. https://api.example.com) at build time. Empty = same origin.
+const API_BASE = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
@@ -82,7 +86,7 @@ async function request<T>(
     const token = getToken();
     if (token) headers["Authorization"] = `Bearer ${token}`;
   }
-  const res = await fetch(path, { ...options, headers });
+  const res = await fetch(API_BASE + path, { ...options, headers });
   if (res.status === 401 && auth) {
     setToken(null);
     throw new Error("Session expired. Please log in again.");

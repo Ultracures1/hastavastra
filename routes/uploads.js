@@ -46,7 +46,10 @@ router.post("/", requireAuth, (req, res) => {
   upload.single("image")(req, res, (err) => {
     if (err) return res.status(400).json({ error: err.message });
     if (!req.file) return res.status(400).json({ error: "No image provided" });
-    res.status(201).json({ url: `/uploads/${req.file.filename}` });
+    // PUBLIC_URL makes upload URLs absolute, required when the frontend is
+    // served from a different host than this API.
+    const base = (process.env.PUBLIC_URL || "").replace(/\/$/, "");
+    res.status(201).json({ url: `${base}/uploads/${req.file.filename}` });
   });
 });
 

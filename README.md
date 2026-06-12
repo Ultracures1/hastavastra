@@ -69,6 +69,20 @@ Images can be uploaded directly from the admin panel (stored in `/uploads`).
 When MySQL env vars are present the server uses MySQL; tables are created and
 seeded automatically on the first start.
 
+## Split deployment (static frontend + separate backend)
+
+If your hosting only serves static files (e.g. Hostinger's git deploy), host
+the backend on a Node platform (Render, Railway, Fly.io, a VPS…) and connect
+the two:
+
+1. Deploy this repo to the Node platform with start command `npm start` and
+   the `.env` values above, **plus** `PUBLIC_URL` set to the backend's own
+   URL (e.g. `https://hastavastra-api.onrender.com`).
+2. On the static host, add a build-time environment variable
+   `VITE_API_URL` with that same backend URL, then rebuild/redeploy.
+3. The storefront and `/admin` are served statically and call the API on the
+   other host (CORS is already enabled on the backend).
+
 ## API overview
 
 Public:
