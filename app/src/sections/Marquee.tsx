@@ -1,5 +1,8 @@
+import { useSiteData } from "@/context/SiteDataContext";
+
 export default function Marquee() {
-  const text = "EARN ON EVERY PURCHASE AND REDEEM POINTS AT 1 POINT = \u20B91  |  REDEEM AS MANY POINTS AS YOU LIKE  |  ";
+  const { settings } = useSiteData();
+  const text = settings.marquee_text || " ";
   const repeated = text.repeat(4);
 
   return (

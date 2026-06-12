@@ -2,9 +2,12 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import { useSiteData } from "@/context/SiteDataContext";
+
 gsap.registerPlugin(ScrollTrigger);
 
 export default function HeroSection() {
+  const hero = useSiteData().settings.hero;
   const sectionRef = useRef<HTMLElement>(null);
   const mainImageRef = useRef<HTMLDivElement>(null);
   const fabricImageRef = useRef<HTMLDivElement>(null);
@@ -101,10 +104,10 @@ export default function HeroSection() {
         {/* Left Panel - Typography */}
         <div ref={textRef} className="py-12 lg:py-0">
           <p className="font-serif text-4xl md:text-5xl text-charcoal mb-1">
-            Wear a
+            {hero.prefix}
           </p>
           <h1 className="font-serif italic text-6xl md:text-8xl lg:text-[120px] text-charcoal leading-none mb-8">
-            story
+            {hero.title}
           </h1>
 
           <div className="w-16 h-[1px] bg-charcoal mb-8" />
@@ -149,8 +152,8 @@ export default function HeroSection() {
             style={{ transformStyle: "preserve-3d" }}
           >
             <img
-              src="/images/hero-saree.jpg"
-              alt="Suta Saree"
+              src={hero.mainImage}
+              alt="Hero Saree"
               className="w-full h-auto rounded-[20px] shadow-2xl"
             />
           </div>
@@ -162,7 +165,7 @@ export default function HeroSection() {
             style={{ transformStyle: "preserve-3d" }}
           >
             <img
-              src="/images/hero-fabric.jpg"
+              src={hero.fabricImage}
               alt="Colorful Fabric"
               className="w-full h-auto rounded-[20px] shadow-xl"
             />

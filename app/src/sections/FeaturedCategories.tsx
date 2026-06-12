@@ -1,11 +1,12 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { featuredCategories } from "@/data/products";
+import { useSiteData } from "@/context/SiteDataContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function FeaturedCategories() {
+  const { featuredCategories } = useSiteData();
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -37,8 +38,8 @@ export default function FeaturedCategories() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {featuredCategories.map((cat) => (
             <a
-              key={cat.name}
-              href="#"
+              key={cat.id}
+              href={cat.href || "#"}
               className="feat-card group relative h-[280px] md:h-[320px] overflow-hidden rounded-[20px]"
             >
               {/* Image */}

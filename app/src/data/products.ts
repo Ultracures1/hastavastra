@@ -11,6 +11,10 @@ export interface Product {
   category: "saree" | "blouse" | "dress" | "kurta" | "lehenga" | "ready-to-wear";
   sizes?: string[];
   hasBlousePiece?: boolean;
+  // Set by the backend; absent in the static fallback data
+  section?: string;
+  sortOrder?: number;
+  active?: boolean;
 }
 
 export const bestsellerSarees: Product[] = [

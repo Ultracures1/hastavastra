@@ -1,19 +1,21 @@
-import { useState, useEffect, useCallback } from "react";
-import { announcementMessages } from "@/data/products";
+import { useState, useEffect } from "react";
+import { useSiteData } from "@/context/SiteDataContext";
 
 export default function AnnouncementBar() {
+  const { settings } = useSiteData();
+  const messages = settings.announcement_messages;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  const nextMessage = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % announcementMessages.length);
-  }, []);
-
   useEffect(() => {
-    if (isPaused) return;
-    const interval = setInterval(nextMessage, 4000);
+    if (isPaused || messages.length === 0) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % messages.length);
+    }, 4000);
     return () => clearInterval(interval);
-  }, [isPaused, nextMessage]);
+  }, [isPaused, messages.length]);
+
+  if (messages.length === 0) return null;
 
   return (
     <div
@@ -22,7 +24,7 @@ export default function AnnouncementBar() {
       onMouseLeave={() => setIsPaused(false)}
     >
       <p className="text-paper text-[11px] uppercase tracking-[2px] font-sans font-medium transition-opacity duration-500">
-        {announcementMessages[currentIndex]}
+        {messages[currentIndex % messages.length]}
       </p>
     </div>
   );

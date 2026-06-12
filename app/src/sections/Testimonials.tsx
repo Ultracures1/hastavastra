@@ -2,11 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
-import { testimonials } from "@/data/products";
+import { useSiteData } from "@/context/SiteDataContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Testimonials() {
+  const { testimonials } = useSiteData();
   const [currentIndex, setCurrentIndex] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   const itemsPerView = typeof window !== "undefined" && window.innerWidth < 768 ? 1 : 4;

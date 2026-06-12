@@ -2,9 +2,12 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import { useSiteData } from "@/context/SiteDataContext";
+
 gsap.registerPlugin(ScrollTrigger);
 
 export default function FabricBanner() {
+  const banner = useSiteData().settings.fabric_banner;
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -32,8 +35,8 @@ export default function FabricBanner() {
     <section ref={sectionRef} className="relative h-[350px] md:h-[400px] overflow-hidden">
       {/* Background Image */}
       <img
-        src="/images/banner-fabric.jpg"
-        alt="Fabric as soft as your skin"
+        src={banner.image}
+        alt={banner.title}
         className="absolute inset-0 w-full h-full object-cover"
       />
 
@@ -44,10 +47,10 @@ export default function FabricBanner() {
       <div className="relative z-10 h-full flex items-center justify-center">
         <div className="text-center">
           <h2 className="banner-text font-serif text-3xl md:text-[42px] text-paper mb-6">
-            Fabric as soft as your skin.
+            {banner.title}
           </h2>
           <button className="banner-text btn-primary">
-            <span>Shop Now</span>
+            <span>{banner.cta || "Shop Now"}</span>
           </button>
         </div>
       </div>

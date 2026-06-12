@@ -1,7 +1,8 @@
-import { pressLogos } from "@/data/products";
+import { useSiteData } from "@/context/SiteDataContext";
 import SectionTitle from "@/components/SectionTitle";
 
 export default function FeaturedIn() {
+  const pressLogos = useSiteData().settings.press_logos;
   return (
     <section className="py-16 bg-beige">
       <div className="max-w-[1400px] mx-auto px-6">

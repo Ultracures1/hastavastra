@@ -2,9 +2,12 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import { useSiteData } from "@/context/SiteDataContext";
+
 gsap.registerPlugin(ScrollTrigger);
 
 export default function PromoBanner() {
+  const banner = useSiteData().settings.promo_banner;
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -32,8 +35,8 @@ export default function PromoBanner() {
     <section ref={sectionRef} className="relative h-[400px] md:h-[500px] overflow-hidden">
       {/* Background Image */}
       <img
-        src="/images/banner-fit.jpg"
-        alt="Designed for the Perfect Fit"
+        src={banner.image}
+        alt={banner.title}
         className="absolute inset-0 w-full h-full object-cover"
       />
 
@@ -45,13 +48,15 @@ export default function PromoBanner() {
         <div className="max-w-[1400px] mx-auto px-6 w-full">
           <div className="max-w-lg">
             <h2 className="banner-text font-serif text-3xl md:text-5xl text-paper mb-4">
-              Designed for the Perfect Fit
+              {banner.title}
             </h2>
-            <p className="banner-text text-paper/70 font-sans text-base md:text-lg mb-8">
-              From size S to XXXL — same comfort, same love.
-            </p>
+            {banner.subtitle && (
+              <p className="banner-text text-paper/70 font-sans text-base md:text-lg mb-8">
+                {banner.subtitle}
+              </p>
+            )}
             <button className="banner-text btn-primary">
-              <span>Shop Now</span>
+              <span>{banner.cta || "Shop Now"}</span>
             </button>
           </div>
         </div>

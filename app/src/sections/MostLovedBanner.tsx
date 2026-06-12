@@ -3,9 +3,12 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Star } from "lucide-react";
 
+import { useSiteData } from "@/context/SiteDataContext";
+
 gsap.registerPlugin(ScrollTrigger);
 
 export default function MostLovedBanner() {
+  const banner = useSiteData().settings.most_loved_banner;
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -33,8 +36,8 @@ export default function MostLovedBanner() {
     <section ref={sectionRef} className="relative h-[450px] md:h-[550px] overflow-hidden">
       {/* Background Image */}
       <img
-        src="/images/banner-loved.jpg"
-        alt="Most loved Sarees"
+        src={banner.image}
+        alt={banner.title}
         className="absolute inset-0 w-full h-full object-cover"
       />
 
@@ -53,13 +56,15 @@ export default function MostLovedBanner() {
             </div>
 
             <h2 className="banner-text font-serif text-3xl md:text-5xl lg:text-[52px] text-paper mb-4">
-              Most loved Sarees by all.
+              {banner.title}
             </h2>
-            <p className="banner-text text-paper/70 font-sans text-base md:text-lg mb-8">
-              Chosen again and again.
-            </p>
+            {banner.subtitle && (
+              <p className="banner-text text-paper/70 font-sans text-base md:text-lg mb-8">
+                {banner.subtitle}
+              </p>
+            )}
             <button className="banner-text btn-primary">
-              <span>Shop Now</span>
+              <span>{banner.cta || "Shop Now"}</span>
             </button>
           </div>
         </div>

@@ -1,11 +1,12 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { categories } from "@/data/products";
+import { useSiteData } from "@/context/SiteDataContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function CategoryCircles() {
+  const { categories } = useSiteData();
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -37,7 +38,7 @@ export default function CategoryCircles() {
         <div className="flex flex-wrap justify-center gap-6 md:gap-10">
           {categories.map((cat) => (
             <a
-              key={cat.name}
+              key={cat.id}
               href={cat.href}
               className="cat-item group flex flex-col items-center gap-3"
             >
