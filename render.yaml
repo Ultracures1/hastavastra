@@ -1,0 +1,33 @@
+# Render Blueprint: deploys the Express API + admin backend.
+# In Render: New + -> Blueprint -> select this repository.
+services:
+  - type: web
+    name: hastavastra-api
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      # Hostinger MySQL credentials (enable "Remote MySQL" in hPanel and
+      # allow Render's outbound IPs, or use % to allow any host)
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: 3306
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+      # First-run admin login
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      # This service's own public URL, e.g. https://hastavastra-api.onrender.com
+      - key: PUBLIC_URL
+        sync: false
