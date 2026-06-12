@@ -1,0 +1,357 @@
+export interface Product {
+  id: string;
+  name: string;
+  type: string;
+  price: number;
+  originalPrice?: number;
+  rating: number;
+  reviews: number;
+  badge?: "BESTSELLER" | "TOP_RATED" | "NEW";
+  image: string;
+  category: "saree" | "blouse" | "dress" | "kurta" | "lehenga" | "ready-to-wear";
+  sizes?: string[];
+  hasBlousePiece?: boolean;
+}
+
+export const bestsellerSarees: Product[] = [
+  {
+    id: "s1",
+    name: "Beet And Turnip",
+    type: "Saree with blouse piece",
+    price: 8400,
+    rating: 5.0,
+    reviews: 784,
+    badge: "TOP_RATED",
+    image: "/images/saree-1.jpg",
+    category: "saree",
+    hasBlousePiece: true,
+  },
+  {
+    id: "s2",
+    name: "Raga Saama",
+    type: "Saree with blouse piece",
+    price: 7700,
+    rating: 4.8,
+    reviews: 333,
+    badge: "BESTSELLER",
+    image: "/images/saree-2.jpg",
+    category: "saree",
+    hasBlousePiece: true,
+  },
+  {
+    id: "s3",
+    name: "Manjaadi",
+    type: "Saree",
+    price: 6500,
+    rating: 4.7,
+    reviews: 249,
+    badge: "TOP_RATED",
+    image: "/images/saree-3.jpg",
+    category: "saree",
+  },
+  {
+    id: "s4",
+    name: "Jheel",
+    type: "Saree",
+    price: 6000,
+    rating: 4.9,
+    reviews: 277,
+    badge: "BESTSELLER",
+    image: "/images/saree-4.jpg",
+    category: "saree",
+  },
+  {
+    id: "s5",
+    name: "Bossy Caramel",
+    type: "Saree",
+    price: 5700,
+    rating: 4.9,
+    reviews: 247,
+    badge: "BESTSELLER",
+    image: "/images/saree-5.jpg",
+    category: "saree",
+  },
+  {
+    id: "s6",
+    name: "Bougainvillea",
+    type: "Saree",
+    price: 5000,
+    rating: 4.8,
+    reviews: 188,
+    badge: "TOP_RATED",
+    image: "/images/saree-6.jpg",
+    category: "saree",
+  },
+  {
+    id: "s7",
+    name: "Raga Bhairavi",
+    type: "Saree with blouse piece",
+    price: 7700,
+    rating: 4.9,
+    reviews: 277,
+    badge: "BESTSELLER",
+    image: "/images/saree-7.jpg",
+    category: "saree",
+    hasBlousePiece: true,
+  },
+  {
+    id: "s8",
+    name: "Raw Ink Mul",
+    type: "Saree",
+    price: 5000,
+    rating: 4.8,
+    reviews: 237,
+    badge: "BESTSELLER",
+    image: "/images/saree-8.jpg",
+    category: "saree",
+  },
+];
+
+export const bestsellerBlouses: Product[] = [
+  {
+    id: "b1",
+    name: "Wild Rose",
+    type: "Blouse",
+    price: 8400,
+    rating: 5.0,
+    reviews: 1,
+    image: "/images/blouse-1.jpg",
+    category: "blouse",
+    sizes: ["2XS", "XS", "S", "M", "L", "XL", "2XL", "3XL"],
+  },
+  {
+    id: "b2",
+    name: "Moody Bindu",
+    type: "Blouse",
+    price: 4800,
+    rating: 5.0,
+    reviews: 1,
+    image: "/images/blouse-2.jpg",
+    category: "blouse",
+    sizes: ["XS", "S", "M", "L", "XL", "2XL"],
+  },
+  {
+    id: "b3",
+    name: "Dot Alat Palat",
+    type: "Blouse",
+    price: 5600,
+    rating: 4.9,
+    reviews: 12,
+    badge: "BESTSELLER",
+    image: "/images/blouse-3.jpg",
+    category: "blouse",
+    sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL"],
+  },
+  {
+    id: "b4",
+    name: "Seedha Alat Palat",
+    type: "Blouse",
+    price: 5000,
+    rating: 4.8,
+    reviews: 8,
+    image: "/images/blouse-4.jpg",
+    category: "blouse",
+    sizes: ["XS", "S", "M", "L", "XL", "2XL"],
+  },
+];
+
+export const newArrivalSarees: Product[] = [
+  {
+    id: "n1",
+    name: "MissYogi",
+    type: "Saree",
+    price: 8580,
+    rating: 4.9,
+    reviews: 45,
+    badge: "NEW",
+    image: "/images/saree-1.jpg",
+    category: "saree",
+  },
+  {
+    id: "n2",
+    name: "Gymwho?",
+    type: "Saree",
+    price: 9300,
+    rating: 5.0,
+    reviews: 23,
+    badge: "NEW",
+    image: "/images/saree-2.jpg",
+    category: "saree",
+  },
+  {
+    id: "n3",
+    name: "Stretchy Si",
+    type: "Saree",
+    price: 8580,
+    rating: 4.8,
+    reviews: 34,
+    badge: "NEW",
+    image: "/images/saree-3.jpg",
+    category: "saree",
+  },
+  {
+    id: "n4",
+    name: "Dhyaan Diva",
+    type: "Saree",
+    price: 8580,
+    rating: 4.9,
+    reviews: 56,
+    badge: "NEW",
+    image: "/images/saree-4.jpg",
+    category: "saree",
+  },
+];
+
+export const readyToWear: Product[] = [
+  {
+    id: "r1",
+    name: "Mehndi Hai Rtw",
+    type: "Ready to Wear",
+    price: 12944,
+    rating: 4.9,
+    reviews: 34,
+    badge: "NEW",
+    image: "/images/saree-5.jpg",
+    category: "ready-to-wear",
+    sizes: ["XS-S", "M-L"],
+  },
+  {
+    id: "r2",
+    name: "Sangeet Hai Rtw",
+    type: "Ready to Wear",
+    price: 12944,
+    rating: 5.0,
+    reviews: 28,
+    badge: "NEW",
+    image: "/images/saree-6.jpg",
+    category: "ready-to-wear",
+    sizes: ["XS-S", "M-L"],
+  },
+  {
+    id: "r3",
+    name: "Shadi Hai Rtw",
+    type: "Ready to Wear",
+    price: 12944,
+    rating: 4.8,
+    reviews: 42,
+    badge: "NEW",
+    image: "/images/saree-7.jpg",
+    category: "ready-to-wear",
+    sizes: ["XS-S", "M-L"],
+  },
+  {
+    id: "r4",
+    name: "Raga Bhairavi Rtw",
+    type: "Ready to Wear",
+    price: 10698,
+    rating: 4.9,
+    reviews: 19,
+    badge: "NEW",
+    image: "/images/saree-8.jpg",
+    category: "ready-to-wear",
+    sizes: ["XL-XXL"],
+  },
+];
+
+export const categories = [
+  { name: "Saree", image: "/images/cat-saree.jpg", href: "#" },
+  { name: "Blouse", image: "/images/cat-blouse.jpg", href: "#" },
+  { name: "Pre Draped", image: "/images/cat-predraped.jpg", href: "#" },
+  { name: "Dresses", image: "/images/cat-dresses.jpg", href: "#" },
+  { name: "Lehenga", image: "/images/cat-lehenga.jpg", href: "#" },
+  { name: "Men", image: "/images/cat-men.jpg", href: "#" },
+  { name: "Combo", image: "/images/cat-combo.jpg", href: "#" },
+];
+
+export const featuredCategories = [
+  { name: "ETHNIC DAY PICKS", image: "/images/saree-1.jpg" },
+  { name: "EVERYDAY", image: "/images/blouse-1.jpg" },
+  { name: "NON-PADDED BLOUSE", image: "/images/blouse-2.jpg" },
+  { name: "PETTICOATS", image: "/images/saree-3.jpg" },
+  { name: "FESTIVE DRAPES", image: "/images/saree-6.jpg" },
+  { name: "MENS KURTA", image: "/images/cat-men.jpg" },
+];
+
+export const testimonials = [
+  {
+    id: "t1",
+    text: "This one is sooooo soft and the color is perfect ...",
+    customer: "Kanchan T.",
+    date: "4 November 2025",
+    product: "Love Chess",
+    rating: 5,
+    image: "/images/testimonial-1.jpg",
+  },
+  {
+    id: "t2",
+    text: "Beautiful!",
+    customer: "Greta",
+    date: "5 November 2025",
+    product: "Radiant Hunar",
+    rating: 5,
+    image: "/images/testimonial-2.jpg",
+  },
+  {
+    id: "t3",
+    text: "\"The Saree That Stayed With Me All Day — ...",
+    customer: "Aishwarya Manjalekar",
+    date: "22 November 2025",
+    product: "Oscar",
+    rating: 5,
+    image: "/images/testimonial-3.jpg",
+  },
+  {
+    id: "t4",
+    text: "Suta sarees are always comfortable to drape. Elegance and comfort ...",
+    customer: "Jyoti S",
+    date: "9 December 2025",
+    product: "Jaloka",
+    rating: 5,
+    image: "/images/testimonial-4.jpg",
+  },
+  {
+    id: "t5",
+    text: "I wore this blouse with one of my old sarees and it completely transformed the look!",
+    customer: "S",
+    date: "11 December 2025",
+    product: "Mukhesh",
+    rating: 5,
+    image: "/images/testimonial-1.jpg",
+  },
+  {
+    id: "t6",
+    text: "Lovely fabric. Saree fabric is like Butter it's mul cotton ...",
+    customer: "Rekha Gupta",
+    date: "11 December 2025",
+    product: "Chocolate Frangipani",
+    rating: 5,
+    image: "/images/testimonial-2.jpg",
+  },
+];
+
+export const pressLogos = [
+  "VOGUE INDIA",
+  "Forbes",
+  "FEMINA",
+  "YOURSTORY",
+  "moneycontrol",
+  "LBB",
+  "BW BUSINESSWORLD",
+];
+
+export const sizeOptions = [
+  { label: "2XS", measurement: "31''" },
+  { label: "XS", measurement: "33''" },
+  { label: "S", measurement: "35''" },
+  { label: "M", measurement: "37''" },
+  { label: "L", measurement: "39''" },
+  { label: "XL", measurement: "41''" },
+  { label: "2XL", measurement: "43''" },
+  { label: "3XL", measurement: "45''" },
+];
+
+export const announcementMessages = [
+  "EASY RETURN AND EXCHANGE",
+  "Free shipping on orders above \u20b95000",
+  "Handcrafted by 17000+ artisans across India",
+];
