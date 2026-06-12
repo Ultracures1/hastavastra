@@ -1,0 +1,10 @@
+# Single-page-app fallback for Apache/LiteSpeed static hosting:
+# serve index.html for any path that is not a real file, so routes like
+# /admin work on a direct visit or refresh.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
