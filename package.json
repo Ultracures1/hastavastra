@@ -5,7 +5,7 @@
   "description": "Hastavastra e-commerce: Express + MySQL backend, React storefront and admin panel",
   "main": "server.js",
   "engines": {
-    "node": "20.x"
+    "node": ">=20"
   },
   "scripts": {
     "start": "node server.js",
@@ -19,7 +19,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
-    "multer": "^1.4.5-lts.1",
+    "multer": "^2.0.2",
     "mysql2": "^3.11.0"
   }
 }

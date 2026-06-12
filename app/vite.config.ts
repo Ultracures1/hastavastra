@@ -7,6 +7,11 @@ import { inspectAttr } from 'kimi-plugin-inspect-react'
 export default defineConfig({
   // absolute base so assets resolve correctly on nested routes like /admin/*
   base: '/',
+  build: {
+    // emit to the repo root so deploy platforms find the output directory
+    outDir: "../dist",
+    emptyOutDir: true,
+  },
   plugins: [inspectAttr(), react()],
   server: {
     port: 3000,

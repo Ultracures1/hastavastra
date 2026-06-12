@@ -29,10 +29,13 @@ app.use(
   express.static(path.join(__dirname, "uploads"), { maxAge: "7d" })
 );
 
-// Built storefront (app/dist). In development run `npm run dev` inside app/
-// instead — Vite proxies /api and /uploads to this server.
-const distDir = path.join(__dirname, "app", "dist");
-if (fs.existsSync(distDir)) {
+// Built storefront (dist/, with app/dist as a legacy fallback). In development
+// run `npm run dev` inside app/ instead — Vite proxies /api and /uploads here.
+const distDir = [
+  path.join(__dirname, "dist"),
+  path.join(__dirname, "app", "dist"),
+].find((dir) => fs.existsSync(path.join(dir, "index.html")));
+if (distDir) {
   app.use(express.static(distDir));
   app.get(/^\/(?!api\/|uploads\/).*/, (req, res) => {
     res.sendFile(path.join(distDir, "index.html"));

@@ -54,10 +54,17 @@ Images can be uploaded directly from the admin panel (stored in `/uploads`).
    - `JWT_SECRET` — a long random string
    - `ADMIN_EMAIL`, `ADMIN_PASSWORD` — your admin login (used on first start)
 3. Build the frontend: `npm run build` (this runs `npm install` + `vite build`
-   inside `app/` and produces `app/dist`, which the server serves).
+   inside `app/` and produces `dist/` at the repo root, which the server
+   serves; it is also the **output directory** if your deploy platform asks
+   for one).
 4. Install backend dependencies: `npm install`
 5. Start: `npm start` (entry point `server.js`). The app listens on `PORT`
    (set automatically by most hosts).
+
+> **Important:** the site must be deployed as a **Node.js application**
+> (start command `npm start`), not as a static website. A static deployment
+> only serves the `dist/` files — the API and the admin panel will not work
+> because the Express server never runs.
 
 When MySQL env vars are present the server uses MySQL; tables are created and
 seeded automatically on the first start.
